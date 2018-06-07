@@ -323,6 +323,7 @@ public class VersionService extends Service {
                     if(builder.isAutoInstall()){
                         install();
                     } else {
+                        AllenEventBusUtil.sendEventBus(AllenEventType.DOWNLOAD_COMPLETE);
                         AllenChecker.cancelMission();
                         AllenVersionChecker.getInstance().cancelAllMission(getApplicationContext());
                     }
