@@ -32,6 +32,7 @@ public abstract class FileCallBack implements Callback {
 
     @Override
     public void onFailure(Call call, IOException e) {
+        e.printStackTrace();
         handler.post(new Runnable() {
             @Override
             public void run() {
