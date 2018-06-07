@@ -28,6 +28,7 @@ public class DownloadBuilder {
     private boolean isShowNotification;
     private boolean isShowDownloadFailDialog;
     private boolean isDirectDownload;
+    private boolean isAutoInstall;
     private NotificationBuilder notificationBuilder;
     private APKDownloadListener apkDownloadListener;
 
@@ -50,7 +51,12 @@ public class DownloadBuilder {
         isShowNotification = true;
         isDirectDownload=false;
         isShowDownloadFailDialog = true;
+        isAutoInstall=true;
         notificationBuilder=NotificationBuilder.create();
+    }
+
+    public boolean isAutoInstall() {
+        return isAutoInstall;
     }
 
     public DownloadBuilder(RequestVersionBuilder requestVersionBuilder, UIData versionBundle) {
@@ -71,6 +77,11 @@ public class DownloadBuilder {
 
     public DownloadBuilder setVersionBundle(UIData versionBundle) {
         this.versionBundle = versionBundle;
+        return this;
+    }
+
+    public DownloadBuilder setAutoInstall(boolean autoInstall) {
+        this.isAutoInstall = autoInstall;
         return this;
     }
 

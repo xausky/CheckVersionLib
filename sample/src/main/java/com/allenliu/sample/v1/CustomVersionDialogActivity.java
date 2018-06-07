@@ -1,8 +1,8 @@
 package com.allenliu.sample.v1;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -96,7 +96,6 @@ public class CustomVersionDialogActivity extends VersionDialogActivity implement
      * 自定义dialog one
      * 使用父类的versionDialog字段来初始化
      *
-     * @see customVersionDialogTwo
      */
     private void customVersionDialogOne() {
         versionDialog = new BaseDialog(this, R.style.BaseDialog, R.layout.custom_dialog_one_layout);
@@ -185,7 +184,7 @@ public class CustomVersionDialogActivity extends VersionDialogActivity implement
                 loadingDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialog) {
-                        AllenHttp.getHttpClient().dispatcher().cancelAll();
+                        //AllenHttp.getHttpClient().dispatcher().cancelAll();
                     }
                 });
             }

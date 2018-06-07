@@ -4,13 +4,12 @@ import android.app.IntentService;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
-import android.support.v4.app.JobIntentService;
 
 import com.allenliu.versionchecklib.R;
 import com.allenliu.versionchecklib.callback.DownloadListener;
@@ -266,14 +265,25 @@ public class VersionService extends Service {
     @WorkerThread
     private void startDownloadApk() {
         //判断是否缓存并且是否强制重新下载
-        final String downloadPath = builder.getDownloadAPKPath() + getString(R.string.versionchecklib_download_apkname, getPackageName());
+        String downloadUrl = builder.getDownloadUrl();
+        Uri uri = Uri.parse(downloadUrl);
+        String path = uri.getPath();
+        String postfix = "apk";
+        if(path.lastIndexOf('.')!=-1){
+            postfix = path.substring(path.lastIndexOf('.'));
+        }
+        uri.getPath().lastIndexOf('.');
+        final String downloadPath = builder.getDownloadAPKPath() + getString(R.string.versionchecklib_download_apkname, downloadUrl.hashCode(), postfix);
         if (DownloadManager.checkAPKIsExists(getApplicationContext(), downloadPath) && !builder.isForceRedownload()) {
             ALog.e("using cache");
-            install();
+            if (builder.getApkDownloadListener() != null)
+                builder.getApkDownloadListener().onDownloadSuccess(new File(downloadPath));
+            if(builder.isAutoInstall()){
+                install();
+            }
             return;
         }
         builderHelper.checkAndDeleteAPK();
-        String downloadUrl = builder.getDownloadUrl();
         if (downloadUrl == null && builder.getVersionBundle() != null) {
             downloadUrl = builder.getVersionBundle().getDownloadUrl();
         }
@@ -303,7 +313,9 @@ public class VersionService extends Service {
                         notificationHelper.showDownloadCompleteNotifcation(file);
                     if (builder.getApkDownloadListener() != null)
                         builder.getApkDownloadListener().onDownloadSuccess(file);
-                    install();
+                    if(builder.isAutoInstall()){
+                        install();
+                    }
                 }
             }
 
