@@ -270,11 +270,11 @@ public class VersionService extends Service {
         }
         Uri uri = Uri.parse(url);
         String path = uri.getPath();
-        String postfix = "apk";
-        if(path.lastIndexOf('.')!=-1){
-            postfix = path.substring(path.lastIndexOf('.') + 1);
+        String name = "base.apk";
+        if(path.lastIndexOf('/')!=-1){
+            name = path.substring(path.lastIndexOf('/') + 1);
         }
-        return String.format(Locale.getDefault(), "%d.%s", uri.hashCode(), postfix);
+        return name;
     }
 
     @WorkerThread
