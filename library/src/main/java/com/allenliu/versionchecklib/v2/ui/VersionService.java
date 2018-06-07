@@ -13,6 +13,7 @@ import android.support.annotation.WorkerThread;
 
 import com.allenliu.versionchecklib.R;
 import com.allenliu.versionchecklib.callback.DownloadListener;
+import com.allenliu.versionchecklib.core.AllenChecker;
 import com.allenliu.versionchecklib.core.DownloadManager;
 import com.allenliu.versionchecklib.core.PermissionDialogActivity;
 import com.allenliu.versionchecklib.core.http.AllenHttp;
@@ -321,6 +322,9 @@ public class VersionService extends Service {
                         builder.getApkDownloadListener().onDownloadSuccess(file);
                     if(builder.isAutoInstall()){
                         install();
+                    } else {
+                        AllenChecker.cancelMission();
+                        AllenVersionChecker.getInstance().cancelAllMission(getApplicationContext());
                     }
                 }
             }
