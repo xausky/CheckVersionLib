@@ -27,9 +27,8 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.1'
-    api 'com.squareup.okhttp3:okhttp:3.8.1'
-    api 'org.greenrobot:eventbus:3.1.1'
+    compile 'com.squareup.okhttp3:okhttp:3.8.1'
+    compile 'org.greenrobot:eventbus:3.1.1'
 }
 def siteUrl = 'https://github.com/AlexLiuSheng/CheckVersionLib' // 项目的主页
 def gitUrl = 'https://github.com/AlexLiuSheng/CheckVersionLib.git' // Git仓库的url
