@@ -31,6 +31,7 @@ import com.allenliu.versionchecklib.core.http.AllenHttp;
 import com.allenliu.versionchecklib.utils.ALog;
 import com.allenliu.versionchecklib.utils.AppUtils;
 import com.allenliu.versionchecklib.v2.ui.AllenBaseActivity;
+import com.allenliu.versionchecklib.v2.ui.VersionService;
 
 import java.io.File;
 
@@ -207,7 +208,7 @@ public class VersionDialogActivity extends AllenBaseActivity implements Download
 
     public void dealAPK() {
         if (versionParams.isSilentDownload()) {
-            String downloadPath = versionParams.getDownloadAPKPath() + getString(R.string.versionchecklib_download_apkname, getPackageName());
+            String downloadPath = versionParams.getDownloadAPKPath() + VersionService.GetFileName(versionParams.getDownloadUrl());
             AppUtils.installApk(VersionDialogActivity.this, new File(downloadPath));
             finish();
         } else {

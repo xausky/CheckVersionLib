@@ -21,6 +21,7 @@ import com.allenliu.versionchecklib.core.http.AllenHttp;
 import com.allenliu.versionchecklib.core.http.FileCallBack;
 import com.allenliu.versionchecklib.utils.ALog;
 import com.allenliu.versionchecklib.utils.AppUtils;
+import com.allenliu.versionchecklib.v2.ui.VersionService;
 
 import java.io.File;
 
@@ -49,7 +50,7 @@ public class DownloadManager {
         if (url == null || url.isEmpty()) {
             return;
         }
-        String downloadPath = versionParams.getDownloadAPKPath() + AllenChecker.getGlobalContext().getString(R.string.versionchecklib_download_apkname, AllenChecker.getGlobalContext().getPackageName());
+        String downloadPath = versionParams.getDownloadAPKPath() + VersionService.GetFileName(versionParams.getDownloadUrl());
         //静默下载也判断本地是否有缓存
         if (versionParams.isSilentDownload()) {
             if (!versionParams.isForceRedownload()) {
@@ -90,7 +91,7 @@ public class DownloadManager {
         final NotificationCompat.Builder finalBuilder = builder;
         final NotificationManager finalManager = manager;
         Request request = new Request.Builder().url(url).build();
-        AllenHttp.getHttpClient().newCall(request).enqueue(new FileCallBack(versionParams.getDownloadAPKPath(), AllenChecker.getGlobalContext().getString(R.string.versionchecklib_download_apkname, AllenChecker.getGlobalContext().getPackageName())) {
+        AllenHttp.getHttpClient().newCall(request).enqueue(new FileCallBack(versionParams.getDownloadAPKPath(), VersionService.GetFileName(versionParams.getDownloadUrl())) {
             @Override
             public void onSuccess(File file, Call call, Response response) {
                 listener.onCheckerDownloadSuccess(file);
@@ -165,7 +166,7 @@ public class DownloadManager {
         Request request = new Request.Builder().url(url).build();
         if (listener != null)
             listener.onCheckerStartDownload();
-        AllenHttp.getHttpClient().newCall(request).enqueue(new FileCallBack(versionParams.getDownloadAPKPath(), context.getString(R.string.versionchecklib_download_apkname, context.getPackageName())) {
+        AllenHttp.getHttpClient().newCall(request).enqueue(new FileCallBack(versionParams.getDownloadAPKPath(), VersionService.GetFileName(versionParams.getDownloadUrl())) {
 
 
             @Override

@@ -35,6 +35,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -253,13 +254,26 @@ public class VersionService extends Service {
 
     private void install() {
         AllenEventBusUtil.sendEventBus(AllenEventType.DOWNLOAD_COMPLETE);
-        final String downloadPath = builder.getDownloadAPKPath() + getString(R.string.versionchecklib_download_apkname, getPackageName());
+        final String downloadPath = builder.getDownloadAPKPath() + VersionService.GetFileName(builder.getDownloadUrl());
         if (builder.isSilentDownload()) {
             showVersionDialog();
         } else {
             builderHelper.checkForceUpdate();
             AppUtils.installApk(getApplicationContext(), new File(downloadPath));
         }
+    }
+
+    public static String GetFileName(String url){
+        if(url == null){
+            return null;
+        }
+        Uri uri = Uri.parse(url);
+        String path = uri.getPath();
+        String postfix = "apk";
+        if(path.lastIndexOf('.')!=-1){
+            postfix = path.substring(path.lastIndexOf('.'));
+        }
+        return String.format(Locale.getDefault(), "%d.%s", uri.hashCode(), postfix);
     }
 
     @WorkerThread
@@ -274,14 +288,7 @@ public class VersionService extends Service {
             AllenVersionChecker.getInstance().cancelAllMission(getApplicationContext());
             throw new RuntimeException("you must set a download url for download function using");
         }
-        Uri uri = Uri.parse(downloadUrl);
-        String path = uri.getPath();
-        String postfix = "apk";
-        if(path.lastIndexOf('.')!=-1){
-            postfix = path.substring(path.lastIndexOf('.'));
-        }
-        uri.getPath().lastIndexOf('.');
-        final String downloadPath = builder.getDownloadAPKPath() + getString(R.string.versionchecklib_download_apkname, downloadUrl.hashCode(), postfix);
+        final String downloadPath = builder.getDownloadAPKPath() + GetFileName(downloadUrl);
         if (DownloadManager.checkAPKIsExists(getApplicationContext(), downloadPath) && !builder.isForceRedownload()) {
             ALog.e("using cache");
             if (builder.getApkDownloadListener() != null)
@@ -292,7 +299,7 @@ public class VersionService extends Service {
             return;
         }
         ALog.e("downloadPath:"+downloadPath);
-        DownloadMangerV2.download(downloadUrl, builder.getDownloadAPKPath(), getString(R.string.versionchecklib_download_apkname, getPackageName()), new DownloadListener() {
+        DownloadMangerV2.download(downloadUrl, builder.getDownloadAPKPath(), VersionService.GetFileName(builder.getDownloadUrl()), new DownloadListener() {
             @Override
             public void onCheckerDownloading(int progress) {
                 if (isServiceAlive) {

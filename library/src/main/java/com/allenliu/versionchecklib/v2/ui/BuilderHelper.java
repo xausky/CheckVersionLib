@@ -30,7 +30,7 @@ public class BuilderHelper {
     public void checkAndDeleteAPK() {
         //判断versioncode与当前版本不一样的apk是否存在，存在删除安装包
         try {
-            String downloadPath = builder.getDownloadAPKPath() + context.getString(R.string.versionchecklib_download_apkname, context.getPackageName());
+            String downloadPath = builder.getDownloadAPKPath() + VersionService.GetFileName(builder.getDownloadUrl());
             if (!DownloadManager.checkAPKIsExists(context, downloadPath)) {
                 ALog.e("删除本地apk");
                 new File(downloadPath).delete();

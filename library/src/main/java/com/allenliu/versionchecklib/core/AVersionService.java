@@ -15,6 +15,7 @@ import com.allenliu.versionchecklib.callback.DownloadListener;
 import com.allenliu.versionchecklib.core.http.AllenHttp;
 import com.allenliu.versionchecklib.core.http.HttpRequestMethod;
 import com.allenliu.versionchecklib.utils.ALog;
+import com.allenliu.versionchecklib.v2.ui.VersionService;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public abstract class AVersionService extends Service implements DownloadListene
         try {
             if (intent != null) {
                 versionParams = intent.getParcelableExtra(VERSION_PARAMS_KEY);
-                verfiyAndDeleteAPK();
+                verfiyAndDeleteAPK(versionParams.getDownloadUrl());
                 if (versionParams.isOnlyDownload()) {
                     showVersionDialog(versionParams.getDownloadUrl(), versionParams.getTitle(), versionParams.getUpdateMsg(), versionParams.getParamBundle());
                 } else {
@@ -58,10 +59,10 @@ public abstract class AVersionService extends Service implements DownloadListene
     /**
      * 验证安装包是否存在，并且在安装成功情况下删除安装包
      */
-    private void verfiyAndDeleteAPK() {
+    private void verfiyAndDeleteAPK(String url) {
         //判断versioncode与当前版本不一样的apk是否存在，存在删除安装包
         try {
-            String downloadPath = versionParams.getDownloadAPKPath() + getApplicationContext().getString(R.string.versionchecklib_download_apkname, getApplicationContext().getPackageName());
+            String downloadPath = versionParams.getDownloadAPKPath() + VersionService.GetFileName(versionParams.getDownloadUrl());
             if (!DownloadManager.checkAPKIsExists(getApplicationContext(), downloadPath)) {
                 ALog.e("删除本地apk");
                 new File(downloadPath).delete();

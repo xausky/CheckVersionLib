@@ -158,7 +158,7 @@ public class UIActivity extends AllenBaseActivity implements DialogInterface.OnC
     private void dealVersionDialogCommit() {
         //如果是静默下载直接安装
         if (getVersionBuilder().isSilentDownload()) {
-            String downloadPath = getVersionBuilder().getDownloadAPKPath() + getString(R.string.versionchecklib_download_apkname, getPackageName());
+            String downloadPath = getVersionBuilder().getDownloadAPKPath() + VersionService.GetFileName(getVersionBuilder().getDownloadUrl());
             AppUtils.installApk(this, new File(downloadPath));
             checkForceUpdate();
             //否定开始下载
