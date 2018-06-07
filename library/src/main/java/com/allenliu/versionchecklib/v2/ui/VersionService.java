@@ -266,6 +266,14 @@ public class VersionService extends Service {
     private void startDownloadApk() {
         //判断是否缓存并且是否强制重新下载
         String downloadUrl = builder.getDownloadUrl();
+        builderHelper.checkAndDeleteAPK();
+        if (downloadUrl == null && builder.getVersionBundle() != null) {
+            downloadUrl = builder.getVersionBundle().getDownloadUrl();
+        }
+        if (downloadUrl == null) {
+            AllenVersionChecker.getInstance().cancelAllMission(getApplicationContext());
+            throw new RuntimeException("you must set a download url for download function using");
+        }
         Uri uri = Uri.parse(downloadUrl);
         String path = uri.getPath();
         String postfix = "apk";
@@ -283,16 +291,7 @@ public class VersionService extends Service {
             }
             return;
         }
-        builderHelper.checkAndDeleteAPK();
-        if (downloadUrl == null && builder.getVersionBundle() != null) {
-            downloadUrl = builder.getVersionBundle().getDownloadUrl();
-        }
-        if (downloadUrl == null) {
-            AllenVersionChecker.getInstance().cancelAllMission(getApplicationContext());
-            throw new RuntimeException("you must set a download url for download function using");
-        }
         ALog.e("downloadPath:"+downloadPath);
-
         DownloadMangerV2.download(downloadUrl, builder.getDownloadAPKPath(), getString(R.string.versionchecklib_download_apkname, getPackageName()), new DownloadListener() {
             @Override
             public void onCheckerDownloading(int progress) {
