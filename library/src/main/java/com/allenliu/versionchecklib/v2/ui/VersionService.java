@@ -299,7 +299,7 @@ public class VersionService extends Service {
             return;
         }
         ALog.e("downloadPath:"+downloadPath);
-        DownloadMangerV2.download(downloadUrl, builder.getDownloadAPKPath(), VersionService.GetFileName(builder.getDownloadUrl()), new DownloadListener() {
+        DownloadMangerV2.download(downloadUrl, builder.getDownloadAPKPath(), VersionService.GetFileName(downloadUrl), new DownloadListener() {
             @Override
             public void onCheckerDownloading(int progress) {
                 if (isServiceAlive) {

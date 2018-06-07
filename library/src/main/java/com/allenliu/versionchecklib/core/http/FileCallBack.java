@@ -92,6 +92,7 @@ public abstract class FileCallBack implements Callback {
             });
 
         } catch (Exception e) {
+            e.printStackTrace();
             handler.post(new Runnable() {
                 @Override
                 public void run() {
