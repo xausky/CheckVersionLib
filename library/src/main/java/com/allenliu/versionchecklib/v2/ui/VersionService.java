@@ -255,7 +255,11 @@ public class VersionService extends Service {
 
     private void install() {
         AllenEventBusUtil.sendEventBus(AllenEventType.DOWNLOAD_COMPLETE);
-        final String downloadPath = builder.getDownloadAPKPath() + VersionService.GetFileName(builder.getDownloadUrl());
+        String downloadUrl = builder.getDownloadUrl();
+        if (downloadUrl == null && builder.getVersionBundle() != null) {
+            downloadUrl = builder.getVersionBundle().getDownloadUrl();
+        }
+        final String downloadPath = builder.getDownloadAPKPath() + VersionService.GetFileName(downloadUrl);
         if (builder.isSilentDownload()) {
             showVersionDialog();
         } else {
