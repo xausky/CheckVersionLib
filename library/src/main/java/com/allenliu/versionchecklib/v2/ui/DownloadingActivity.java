@@ -34,15 +34,20 @@ public class DownloadingActivity extends AllenBaseActivity implements DialogInte
         showLoadingDialog();
     }
 
-
-    @Override
-    public void onCancel(DialogInterface dialogInterface) {
-
-        AllenHttp.getHttpClient().dispatcher().cancelAll();
-        cancelHandler();
-        checkForceUpdate();
+    public void onCancel(boolean isDownloadCompleted) {
+        if (!isDownloadCompleted) {
+            AllenHttp.getHttpClient().dispatcher().cancelAll();
+            cancelHandler();
+            checkForceUpdate();
+        }
         finish();
     }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        onCancel(false);
+    }
+
 
     @Override
     public void receiveEvent(CommonEvent commonEvent) {
@@ -53,6 +58,8 @@ public class DownloadingActivity extends AllenBaseActivity implements DialogInte
                 updateProgress();
                 break;
             case AllenEventType.DOWNLOAD_COMPLETE:
+                onCancel(true);
+                break;
             case AllenEventType.CLOSE_DOWNLOADING_ACTIVITY:
                 destroy();
                 break;
@@ -78,17 +85,19 @@ public class DownloadingActivity extends AllenBaseActivity implements DialogInte
 
     @Override
     public void showCustomDialog() {
-        downloadingDialog = getVersionBuilder().getCustomDownloadingDialogListener().getCustomDownloadingDialog(this, currentProgress, getVersionBuilder().getVersionBundle());
-        View cancelView = downloadingDialog.findViewById(R.id.versionchecklib_loading_dialog_cancel);
-        if (cancelView != null) {
-            cancelView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    onCancel(downloadingDialog);
-                }
-            });
+        if(getVersionBuilder()!=null) {
+            downloadingDialog = getVersionBuilder().getCustomDownloadingDialogListener().getCustomDownloadingDialog(this, currentProgress, getVersionBuilder().getVersionBundle());
+            View cancelView = downloadingDialog.findViewById(R.id.versionchecklib_loading_dialog_cancel);
+            if (cancelView != null) {
+                cancelView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onCancel(false);
+                    }
+                });
+            }
+            downloadingDialog.show();
         }
-        downloadingDialog.show();
     }
 
     @Override
@@ -101,29 +110,31 @@ public class DownloadingActivity extends AllenBaseActivity implements DialogInte
     @Override
     protected void onResume() {
         super.onResume();
-        isDestroy=false;
-        if (downloadingDialog != null&&!downloadingDialog.isShowing())
+        isDestroy = false;
+        if (downloadingDialog != null && !downloadingDialog.isShowing())
             downloadingDialog.show();
     }
 
     private void destroyWithOutDismiss() {
-        if (downloadingDialog != null&&downloadingDialog.isShowing()) {
+        if (downloadingDialog != null && downloadingDialog.isShowing()) {
             downloadingDialog.dismiss();
+//            onCancel(false);
         }
     }
 
     private void destroy() {
         ALog.e("loading activity destroy");
 
-        if (downloadingDialog != null) {
+        if (downloadingDialog != null && downloadingDialog.isShowing()) {
             downloadingDialog.dismiss();
+//            onCancel(false);
         }
         finish();
     }
 
     private void updateProgress() {
         if (!isDestroy) {
-            if (getVersionBuilder().getCustomDownloadingDialogListener() != null) {
+            if (getVersionBuilder() != null && getVersionBuilder().getCustomDownloadingDialogListener() != null) {
                 getVersionBuilder().getCustomDownloadingDialogListener().updateUI(downloadingDialog, currentProgress, getVersionBuilder().getVersionBundle());
             } else {
                 ProgressBar pb = downloadingDialog.findViewById(R.id.pb);
@@ -139,7 +150,7 @@ public class DownloadingActivity extends AllenBaseActivity implements DialogInte
     private void showLoadingDialog() {
         ALog.e("show loading");
         if (!isDestroy) {
-            if (getVersionBuilder().getCustomDownloadingDialogListener() != null) {
+            if (getVersionBuilder() != null && getVersionBuilder().getCustomDownloadingDialogListener() != null) {
                 showCustomDialog();
             } else {
                 showDefaultDialog();

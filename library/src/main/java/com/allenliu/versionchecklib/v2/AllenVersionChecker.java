@@ -33,8 +33,9 @@ public class AllenVersionChecker {
     }
 
     public void cancelAllMission(Context context) {
+        AllenHttp.getHttpClient().dispatcher().cancelAll();
         Intent intent = new Intent(context, VersionService.class);
-        context.stopService(intent);
+        context.getApplicationContext().stopService(intent);
     }
 
     /**

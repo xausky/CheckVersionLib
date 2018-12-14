@@ -1,41 +1,42 @@
 ## CheckVersionLib[ ![Download](https://api.bintray.com/packages/zkxy/maven/VersionCheckLib/images/download.svg) ](https://bintray.com/zkxy/maven/VersionCheckLib/_latestVersion)
-## V2版震撼来袭，功能强大，链式编程，调用简单，集成轻松，扩展性强大
+## V2 Version has been born with shocking, strong functions,chain programing, easy to integrate,strong extension
+[中文文档](https://github.com/AlexLiuSheng/CheckVersionLib/blob/master/README_UN.MD)
 
-老规矩先看V2效果，这个版本最大的特点就是使用非常简单，相对于1.+版本
+The strongest feature is easier to integrate than version  of V1.+
 
-### 效果
+### Effect
  <img src="https://github.com/AlexLiuSheng/CheckVersionLib/blob/master/gif/v2.jpg" width=200/><img src="https://github.com/AlexLiuSheng/CheckVersionLib/blob/master/gif/V2.gif" width=200/>
  
-### 特点
-- [x] 任何地方都可以调用
+### Features
+- [x] Invoke everywhere you want
 
-- [x] **简单简单简单简单**（重要的话我说四遍）
+- [x] **Easy**
 
-- [x] **扩展性强大**
+- [x] **Strong Extension**
 
-- [x] 所有具有升级功能的app均可使用，耶稣说的
+- [x] Adapt to all applications that have update function
 
-- [x] **更强大的自定义界面支持**
+- [x] **Customize Ui**
 
-- [x] 支持强制更新（一行代码）
+- [x] Support Force Update（one line code）
 
-- [x] 支持静默下载 （一行代码）
+- [x] Support Silence Download （one line code）
 
-- [x] 适配到Android O
+- [x] Adapt to Android O
 
-### 导入
+### include
 
 ```
-compile 'com.allenliu.versionchecklib:library:2.0.5'
+compile 'com.allenliu.versionchecklib:library:2.1.6'
 ```
 
-### 使用
+### usage
 
-和1.+版本一样，两种模式
 
-> 只使用下载模式
 
-先来个最简单的调用
+> Only use download mode
+
+the easiest way to use
 
 ```
         AllenVersionChecker
@@ -46,13 +47,13 @@ compile 'com.allenliu.versionchecklib:library:2.0.5'
                 .excuteMission(context);
 ```
 
-`UIData`：UIData是一个Bundle，用于存放用于UI展示的一些数据，后面自定义界面时候可以拿来用
+`UIData`：UIData is the type of Bundle，it save some data for displaying ui page，it can use in your customization page/
 
 
 
-> 请求服务器版本+下载
+> Request Version + Download mode
 
-该模式最简单的使用
+the easiest way to call 
 ```
    AllenVersionChecker
                 .getInstance()
@@ -62,9 +63,10 @@ compile 'com.allenliu.versionchecklib:library:2.0.5'
                     @Nullable
                     @Override
                     public UIData onRequestVersionSuccess(String result) {
-                        //拿到服务器返回的数据，解析，拿到downloadUrl和一些其他的UI数据
+                        //get the data response from server,parse,get the `downloadUlr` and some other ui date
+                      
                         ...
-                        //如果是最新版本直接return null
+                        //return null if you dont want to update application
                         return UIData.create().setDownloadUrl(downloadUrl);
                     }
 
@@ -77,7 +79,7 @@ compile 'com.allenliu.versionchecklib:library:2.0.5'
 
 
 ```
-请求版本一些其他的http参数可以设置，如下
+Some other http params for request app version,as follows
 
 ```
  AllenVersionChecker
@@ -91,14 +93,14 @@ compile 'com.allenliu.versionchecklib:library:2.0.5'
                     @Nullable
                     @Override
                     public UIData onRequestVersionSuccess(String result) {
-                        //拿到服务器返回的数据，解析，拿到downloadUrl和一些其他的UI数据
+                        //get the data response from server,parse,get the `downloadUlr` and some other ui date
                         ...
                         UIData uiData = UIData
                                 .create()
                                 .setDownloadUrl(downloadUrl)
                                 .setTitle(updateTitle)
                                 .setContent(updateContent);
-                        //放一些其他的UI参数，拿到后面自定义界面使用
+                        //return null if you dont want to update application
                         uiData.getVersionBundle().putString("key", "your value");
                         return uiData;
 
@@ -112,10 +114,10 @@ compile 'com.allenliu.versionchecklib:library:2.0.5'
                 .excuteMission(context);
 ```
 
-以上就是最基本的使用（库默认会有一套界面），如果还不满足项目需求，下面就可以用这个库来飙车了
+the instructions above is the basic using for integrating(library has a set of default ui page),you can use some other params,if it does not fit your requirement the above.
 
-### 一些其他的function设置
-解释下，下面的builder叫`DownloadBuilder`
+### some other functions
+first of all,the builder of follow is called `DownloadBuilder`
 ```
  DownloadBuilder builder=AllenVersionChecker
                 .getInstance()
@@ -131,44 +133,50 @@ compile 'com.allenliu.versionchecklib:library:2.0.5'
                  .requestVersion()
                  .request()
 ```
-> 取消任务
+> cancel mission
 
  ```
   AllenVersionChecker.getInstance().cancelAllMission(this);
 
 ```
-> 静默下载
+> silent download
   
   ```
-   builder.setSilentDownload(true); 默认false
+   builder.setSilentDownload(true); false for default
   ```
+> set the newest version code of your server returned，it is used to verify if use file cache.
+ 
+  - Cache category：first check running app's versionCode whether equal with the installation package.Then check developer whether pass the newest VersionCode ,if so, check the 
+   VersionCode is greater than local,if it is truth ,download apk from server, otherwise use cache.
+  ```
+   builder.setNewestVersionCode(int); null for default 
+  ```
+> Force Update
 
-> 强制更新
-
-  设置此listener即代表需要强制更新，会在用户想要取消下载的时候回调
-  需要你自己关闭所有界面
+  set the listener represent need force update function,it will be call when user cancel the download operation,developer need close all the activities of application.
   ```
   builder.setForceUpdateListener(() -> {
                 forceUpdate();
             });
 ```    
-> 下载忽略本地缓存
+> Force ReDownload no matter there is cache
 
-  如果本地有安装包缓存也会重新下载apk
+
   
 ```
- builder.setForceRedownload(true); 默认false
+ builder.setForceRedownload(true); false for default
 ``` 
-> 是否显示下载对话框
+
+> set whether show downloading dialog
 ```
-builder.setShowDownloadingDialog(false); 默认true
+builder.setShowDownloadingDialog(false); true for default
 ```
-> 是否显示通知栏
+> set whether  show notification
 
 ```
-builder.setShowNotification(false);  默认true
+builder.setShowNotification(false);  true for default 
 ```
-> 自定义通知栏
+> customize notification
 ```
       builder.setNotificationBuilder(
                  NotificationBuilder.create()
@@ -179,17 +187,21 @@ builder.setShowNotification(false);  默认true
                          .setContentText(getString(R.string.custom_content_text))
          );
 ```
-> 是否显示失败对话框
+> set whether show download failed dialog
 
 ```
-  builder.setShowDownloadFailDialog(false); 默认true
+  builder.setShowDownloadFailDialog(false); true for default
 ```
-> 自定义下载路径
+> customize download apk path
 
 ```
-  builder.setDownloadAPKPath(address); 默认：/storage/emulated/0/AllenVersionPath/
+  builder.setDownloadAPKPath(address); default：/storage/emulated/0/AllenVersionPath/
 ```
-> 可以设置下载监听
+> customize download apk name
+```
+  builder.setApkName(apkName); default：getPackageName()
+```
+> set download listener
 
 ```
    builder.setApkDownloadListener(new APKDownloadListener() {
@@ -209,43 +221,44 @@ builder.setShowNotification(false);  默认true
              }
          });
 ```
-> 设置取消监听
+> cancel listener
 ```
 
  builder.setOnCancelListener(() -> {
             Toast.makeText(V2Activity.this,"Cancel Hanlde",Toast.LENGTH_SHORT).show();
         });
 ```
-> 静默下载+直接安装（不会弹出升级对话框）
+> silent download+install directly（dont popup update dialog）
 ```
     builder.setDirectDownload(true);
            builder.setShowNotification(false);
            builder.setShowDownloadingDialog(false);
            builder.setShowDownloadFailDialog(false);
 ```
-### 自定义界面
+### customize the ui page
 
-自定义界面使用回调方式，开发者需要返回自己定义的Dialog（父类android.app）
+Customization page use the way of listener,developer need return the Dialog(parent:android.app) that you customized
 
- - 所有自定义的界面必须使用listener里面的context实例化
+
+ - all the dialog must initiate with the context inside the listener.
  
- - 界面展示的数据通过UIData拿
+ - the data fo page takes from UIData
 
-> **自定义显示更新界面**
+> **Customize Show Version Dialog**
 
-   设置`CustomVersionDialogListener`
+   set`CustomVersionDialogListener`
    
 
-- 定义此界面**必须**有一个确定下载的按钮，按钮id必须为`@id/versionchecklib_version_dialog_commit`
+- define the page **must** have a commit download button,the id of button must be `@id/versionchecklib_version_dialog_commit`
 
-- 如果有取消按钮（没有忽略本条要求），则按钮id必须为`@id/versionchecklib_version_dialog_cancel`
+- if has cancel button(ignore if not),the id of button must be `@id/versionchecklib_version_dialog_cancel`
 
 eg.
 
 ```
   builder.setCustomVersionDialogListener((context, versionBundle) -> {
             BaseDialog baseDialog = new BaseDialog(context, R.style.BaseDialog, R.layout.custom_dialog_one_layout);
-            //versionBundle 就是UIData，之前开发者传入的，在这里可以拿出UI数据并展示
+            //versionBundle is instance of UIData，passed from developer,it can be use to display 
             TextView textView = baseDialog.findViewById(R.id.tv_msg);
             textView.setText(versionBundle.getContent());
             return baseDialog;
@@ -253,12 +266,12 @@ eg.
 
 ```
 
-> **自定义下载中对话框界面**
+> **customize downloading dialog page**
 
-设置`CustomDownloadingDialogListener`
+set`CustomDownloadingDialogListener`
 
 
-- 如果此界面要设计取消操作（没有忽略），请务必将id设置为`@id/versionchecklib_loading_dialog_cancel`
+- if has cancel button(ignore if not),the id of button must be`@id/versionchecklib_loading_dialog_cancel`
 
 
 ```
@@ -268,7 +281,7 @@ eg.
                 BaseDialog baseDialog = new BaseDialog(context, R.style.BaseDialog, R.layout.custom_download_layout);
                 return baseDialog;
             }
-//下载中会不断回调updateUI方法
+// loop invoke the updateUI method when downloading
             @Override
             public void updateUI(Dialog dialog, int progress, UIData versionBundle) {
                 TextView tvProgress = dialog.findViewById(R.id.tv_progress);
@@ -279,13 +292,13 @@ eg.
         });
 ```
 
-> **自定义下载失败对话框**
+> **customize download failed page**
 
-设置CustomDownloadFailedListener
+setCustomDownloadFailedListener
 
-- 如果有**重试**按钮请将id设置为`@id/versionchecklib_failed_dialog_retry`
+- if has button of **retry**,the id must be`@id/versionchecklib_failed_dialog_retry`
 
-- 如果有 **确认/取消**按钮请将id设置为`@id/versionchecklib_failed_dialog_cancel`
+- if has the button of **commit/cancel**,the id must be `@id/versionchecklib_failed_dialog_cancel`
 
 ```
    builder.setCustomDownloadFailedListener((context, versionBundle) -> {
@@ -295,15 +308,25 @@ eg.
 ```
 ***
 
-### 最后
+###  ProGuard
+```
+   -keepattributes Annotation
+   -keepclassmembers class * {    @org.greenrobot.eventbus.Subscribe ;}
+   -keep enum org.greenrobot.eventbus.ThreadMode { *; }
+   -keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {    (java.lang.Throwable);}
+   -keep class com.allenliu.versionchecklib.**{*;}
+```
+
+
+### Last
 
 ***
 
- - 更全面的使用请看 [demo](https://github.com/AlexLiuSheng/CheckVersionLib/blob/master/sample/src/main/java/com/allenliu/sample/v2/V2Activity.java)
+ - download the  [demo](https://github.com/AlexLiuSheng/CheckVersionLib/blob/master/sample/src/main/java/com/allenliu/sample/v2/V2Activity.java) to view  more functions
  
- - 感谢各位对本库的支持
+ - thanks all for the support library
  
- - 欢迎star/issue
+ - star/issue is welcome
  
 
 

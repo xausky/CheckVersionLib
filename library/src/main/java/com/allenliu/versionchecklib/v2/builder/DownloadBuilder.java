@@ -1,5 +1,6 @@
 package com.allenliu.versionchecklib.v2.builder;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -13,6 +14,8 @@ import com.allenliu.versionchecklib.v2.callback.CustomDownloadingDialogListener;
 import com.allenliu.versionchecklib.v2.callback.CustomVersionDialogListener;
 import com.allenliu.versionchecklib.v2.callback.ForceUpdateListener;
 import com.allenliu.versionchecklib.v2.ui.VersionService;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by allenliu on 2018/1/12.
@@ -38,6 +41,9 @@ public class DownloadBuilder {
     private OnCancelListener onCancelListener;
     private ForceUpdateListener forceUpdateListener;
     private UIData versionBundle;
+    private Integer newestVersionCode;
+    private String apkName;
+
 
     public DownloadBuilder() {
         throw new RuntimeException("can not be instantiated from outside");
@@ -49,10 +55,10 @@ public class DownloadBuilder {
         isForceRedownload = false;
         isShowDownloadingDialog = true;
         isShowNotification = true;
-        isDirectDownload=false;
+        isDirectDownload = false;
         isShowDownloadFailDialog = true;
         isAutoInstall=true;
-        notificationBuilder=NotificationBuilder.create();
+        notificationBuilder = NotificationBuilder.create();
     }
 
     public boolean isAutoInstall() {
@@ -75,7 +81,12 @@ public class DownloadBuilder {
         return this;
     }
 
-    public DownloadBuilder setVersionBundle(UIData versionBundle) {
+    public DownloadBuilder setApkName(String apkName) {
+        this.apkName = apkName;
+        return this;
+    }
+
+    public DownloadBuilder setVersionBundle(@NonNull UIData versionBundle) {
         this.versionBundle = versionBundle;
         return this;
     }
@@ -89,8 +100,8 @@ public class DownloadBuilder {
         return versionBundle;
     }
 
-    public DownloadBuilder setOnCancelListener(OnCancelListener cancelListener){
-        this.onCancelListener=cancelListener;
+    public DownloadBuilder setOnCancelListener(OnCancelListener cancelListener) {
+        this.onCancelListener = cancelListener;
         return this;
     }
 
@@ -112,6 +123,15 @@ public class DownloadBuilder {
 
     public DownloadBuilder setSilentDownload(boolean silentDownload) {
         isSilentDownload = silentDownload;
+        return this;
+    }
+
+    public Integer getNewestVersionCode() {
+        return newestVersionCode;
+    }
+
+    public DownloadBuilder setNewestVersionCode(Integer newestVersionCode) {
+        this.newestVersionCode = newestVersionCode;
         return this;
     }
 
@@ -151,8 +171,6 @@ public class DownloadBuilder {
     }
 
 
-
-
     public boolean isSilentDownload() {
         return isSilentDownload;
     }
@@ -186,7 +204,6 @@ public class DownloadBuilder {
     }
 
 
-
     public CustomDownloadFailedListener getCustomDownloadFailedListener() {
         return customDownloadFailedListener;
     }
@@ -216,6 +233,10 @@ public class DownloadBuilder {
         return this;
     }
 
+    public String getApkName() {
+        return apkName;
+    }
+
     public boolean isDirectDownload() {
         return isDirectDownload;
     }
@@ -225,7 +246,13 @@ public class DownloadBuilder {
         return this;
     }
 
-    public void excuteMission(Context context) {
-        VersionService.enqueueWork(context, this);
+    public void executeMission(Context context) {
+        if (apkName == null) {
+            apkName = context.getApplicationContext().getPackageName();
+        }
+        EventBus.getDefault().postSticky(this);
+        VersionService.enqueueWork(context.getApplicationContext());
     }
+
+
 }

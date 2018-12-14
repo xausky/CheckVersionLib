@@ -72,7 +72,7 @@ public abstract class FileCallBack implements Callback {
 //                ALog.e("file total size:"+total);
                 fos.write(buf, 0, len);
                 sum += len;
-                final int progress = (int) (((double)sum / total) * 100);
+                final int progress = (int) (((double) sum / total) * 100);
                 // 下载中
                 handler.post(new Runnable() {
                     @Override
@@ -104,12 +104,10 @@ public abstract class FileCallBack implements Callback {
             try {
                 if (is != null)
                     is.close();
-            } catch (IOException e) {
-            }
-            try {
                 if (fos != null)
                     fos.close();
             } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
