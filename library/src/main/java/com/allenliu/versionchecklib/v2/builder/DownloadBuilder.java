@@ -251,7 +251,7 @@ public class DownloadBuilder {
             apkName = context.getApplicationContext().getPackageName();
         }
         EventBus.getDefault().postSticky(this);
-        VersionService.enqueueWork(context.getApplicationContext());
+        VersionService.enqueueWork(context.getApplicationContext(), this);
     }
 
 
